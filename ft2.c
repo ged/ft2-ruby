@@ -348,7 +348,7 @@ VALUE ft_face_new(int argc, VALUE *argv, VALUE klass) {
   }
 
   face = malloc(sizeof(FT_Face));
-  err = FT_New_Face(*lib, RSTRING(path)->ptr, face_index, face);
+  err = FT_New_Face(*lib, RSTRING_PTR(path), face_index, face);
   if (err != FT_Err_Ok)
     handle_error(err);
 
@@ -391,18 +391,18 @@ VALUE ft_face_new_from_memory(int argc, VALUE *argv, VALUE klass) {
   lib = &library;
   switch (argc) {
     case 2:
-      mem = RSTRING(argv[0])->ptr;
+      mem = RSTRING_PTR(argv[0]);
       len = NUM2INT(argv[1]);
       face_index = 0;
       break;
     case 3:
       if (rb_obj_is_kind_of(argv[0], rb_cString)) {
-        mem = RSTRING(argv[0])->ptr;
+        mem = RSTRING_PTR(argv[0]);
         len = NUM2INT(argv[1]);
         face_index = NUM2INT(argv[2]);
       } else if (rb_obj_is_kind_of(argv[0], cLibrary)) {
         Data_Get_Struct(argv[0], FT_Library, lib);
-        mem = RSTRING(argv[1])->ptr;
+        mem = RSTRING_PTR(argv[1]);
         len = NUM2INT(argv[2]);
         face_index = 0;
       } else {
@@ -411,7 +411,7 @@ VALUE ft_face_new_from_memory(int argc, VALUE *argv, VALUE klass) {
       break;
     case 4:
       Data_Get_Struct(argv[0], FT_Library, lib);
-      mem = RSTRING(argv[1])->ptr;
+      mem = RSTRING_PTR(argv[1]);
       len = NUM2INT(argv[2]);
       face_index = NUM2INT(argv[3]);
       break;
@@ -1088,7 +1088,7 @@ static VALUE ft_face_attach(VALUE self, VALUE path) {
   FT_Face *face;
   FT_Error err;
   Data_Get_Struct(self, FT_Face, face);
-  if ((err = FT_Attach_File(*face, RSTRING(path)->ptr)) != FT_Err_Ok)
+  if ((err = FT_Attach_File(*face, RSTRING_PTR(path))) != FT_Err_Ok)
     handle_error(err);
   return self;
 }
@@ -1371,7 +1371,7 @@ static VALUE ft_face_char_index(VALUE self, VALUE char_code) {
 static VALUE ft_face_name_index(VALUE self, VALUE glyph_name) {
   FT_Face *face;
   Data_Get_Struct(self, FT_Face, face);
-  return INT2FIX(FT_Get_Name_Index(*face, RSTRING(glyph_name)->ptr));
+  return INT2FIX(FT_Get_Name_Index(*face, RSTRING_PTR(glyph_name)));
 }
 
 /*
